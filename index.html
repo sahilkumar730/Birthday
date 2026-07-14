@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#1a0f2e;
+    --bg2:#2d1b4e;
+    --pink:#ff6fa5;
+    --rose:#ff4d7d;
+    --gold:#ffd166;
+    --lav:#c9a8ff;
+    --white:#fff8fb;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background: linear-gradient(180deg, var(--bg1), var(--bg2) 40%, #170c28 100%);
+    color: var(--white);
+    font-family:'Poppins', sans-serif;
+    overflow-x:hidden;
+    position:relative;
+  }
+  h1,h2,.script{ font-family:'Dancing Script', cursive; }
+
+  /* floating hearts background */
+  #hearts{
+    position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden;
+  }
+  .heart{
+    position:absolute;
+    bottom:-40px;
+    font-size: 18px;
+    color: var(--pink);
+    opacity:0.55;
+    animation: rise linear infinite;
+    user-select:none;
+  }
+  @keyframes rise{
+    0%{ transform: translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    10%{ opacity:0.6; }
+    100%{ transform: translateY(-115vh) translateX(20px) rotate(25deg); opacity:0; }
+  }
+
+  section, .hero{ position:relative; z-index:2; }
+
+  /* music toggle */
+  #music-toggle{
+    position:fixed;
+    top:20px; right:20px;
+    z-index:50;
+    width:46px; height:46px;
+    border-radius:50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: var(--white);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    backdrop-filter: blur(6px);
+    font-size:18px;
+  }
+
+  /* HERO */
+  .hero{
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding: 40px 24px;
+  }
+  .hero .greeting{
+    font-size: clamp(15px, 2vw, 18px);
+    letter-spacing: 3px;
+    text-transform:uppercase;
+    color: var(--lav);
+    margin-bottom: 18px;
+    min-height: 24px;
+  }
+  .hero h1{
+    font-size: clamp(46px, 10vw, 96px);
+    background: linear-gradient(90deg, var(--pink), var(--gold));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    line-height:1.05;
+    margin-bottom: 20px;
+  }
+  .hero .cursor{ border-right: 2px solid var(--gold); animation: blink 0.8s step-end infinite; }
+  @keyframes blink{ 50%{ border-color:transparent; } }
+
+  .hero p.sub{
+    max-width: 480px;
+    font-weight:300;
+    font-size: clamp(14px,1.8vw,17px);
+    color: rgba(255,255,255,0.75);
+    line-height:1.7;
+  }
+
+  .scroll-hint{
+    margin-top:56px;
+    font-size:13px;
+    color: var(--lav);
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    animation: bob 2.2s ease-in-out infinite;
+    cursor:pointer;
+  }
+  @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(8px);} }
+
+  /* SECTION SHARED */
+  section{ padding: 100px 20px; }
+  .inner{ max-width: 900px; margin:0 auto; }
+  .head{ text-align:center; margin-bottom:54px; }
+  .head .script{ font-size: clamp(30px,5vw,44px); color: var(--pink); }
+  .head p{ color: rgba(255,255,255,0.6); font-weight:300; margin-top:8px; }
+
+  /* COUNTER */
+  .counter-row{
+    display:flex; justify-content:center; gap: 18px; flex-wrap:wrap;
+  }
+  .counter-box{
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 26px 22px;
+    min-width: 100px;
+    text-align:center;
+    backdrop-filter: blur(6px);
+  }
+  .counter-box .num{
+    font-size: clamp(28px,4vw,40px);
+    font-weight:600;
+    color: var(--gold);
+    font-family:'Dancing Script', cursive;
+  }
+  .counter-box .lbl{
+    font-size:12px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-top:6px;
+  }
+
+  /* GALLERY / SLIDESHOW */
+  .slideshow{
+    position:relative;
+    max-width: 380px;
+    margin: 0 auto;
+    aspect-ratio: 4/5;
+    border-radius: 20px;
+    overflow:hidden;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+    border: 3px solid rgba(255,255,255,0.15);
+  }
+  .slide{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    opacity:0;
+    transition: opacity 1s ease;
+  }
+  .slide.active{ opacity:1; }
+  .slide .frame{
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .slide .frame svg{ width:40%; height:40%; opacity:0.85; }
+  .slide .cap{
+    position:absolute; bottom:0; left:0; right:0;
+    padding: 18px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.55), transparent);
+    font-family:'Dancing Script', cursive;
+    font-size: 20px;
+    text-align:center;
+  }
+  .dots{
+    display:flex; justify-content:center; gap:8px; margin-top:20px;
+  }
+  .dot{
+    width:8px; height:8px; border-radius:50%;
+    background: rgba(255,255,255,0.25);
+    cursor:pointer;
+    transition: background .3s ease;
+  }
+  .dot.active{ background: var(--pink); }
+  .upload-note{
+    text-align:center; margin-top:18px; font-size:13px; color: rgba(255,255,255,0.45);
+  }
+
+  /* REASONS */
+  .reasons-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px,1fr));
+    gap: 20px;
+  }
+  .reason-card{
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 24px 22px;
+    transition: transform .3s ease, background .3s ease;
+  }
+  .reason-card:hover{
+    transform: translateY(-6px);
+    background: rgba(255,255,255,0.09);
+  }
+  .reason-card .num{
+    font-family:'Dancing Script', cursive;
+    font-size:26px; color: var(--pink); margin-bottom:8px; display:block;
+  }
+  .reason-card p{ font-weight:300; font-size:14.5px; line-height:1.6; color: rgba(255,255,255,0.8); }
+
+  /* LETTER */
+  .letter{
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 22px;
+    padding: 54px 40px;
+    text-align:center;
+    max-width: 640px;
+    margin:0 auto;
+  }
+  .letter p{
+    font-weight:300;
+    line-height: 1.9;
+    color: rgba(255,255,255,0.85);
+    font-size: 16px;
+    margin-bottom: 22px;
+  }
+  .letter .sign{
+    font-family:'Dancing Script', cursive;
+    font-size: 26px;
+    color: var(--gold);
+  }
+
+  /* GIFT / SURPRISE */
+  .gift-wrap{ text-align:center; }
+  .gift{
+    font-size: 90px;
+    cursor:pointer;
+    display:inline-block;
+    animation: shake 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
+    transition: transform .3s ease;
+  }
+  .gift:hover{ transform: scale(1.08); }
+  @keyframes shake{
+    0%,100%{ transform: rotate(0deg); }
+    5%{ transform: rotate(-8deg); }
+    10%{ transform: rotate(8deg); }
+    15%{ transform: rotate(-6deg); }
+    20%{ transform: rotate(0deg); }
+  }
+  .gift-msg{
+    margin-top: 26px;
+    font-family:'Dancing Script', cursive;
+    font-size: 24px;
+    color: var(--pink);
+    opacity:0;
+    max-height:0;
+    overflow:hidden;
+    transition: opacity .6s ease;
+  }
+  .gift-msg.show{ opacity:1; max-height:200px; margin-top:26px; }
+
+  footer{
+    text-align:center; padding: 50px 20px 70px;
+    font-size:13px; color: rgba(255,255,255,0.4);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .heart, .scroll-hint, .gift{ animation:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="hearts"></div>
+<button id="music-toggle" onclick="toggleMusic()">♪</button>
+
+<section class="hero">
+  <div class="greeting" id="typewriter"></div>
+  <h1>Happy Birthday</h1>
+  <p class="sub">A little site made just for you, love — every scroll is another reason you're the best part of my life.</p>
+  <div class="scroll-hint" onclick="document.getElementById('counter').scrollIntoView({behavior:'smooth'})">
+    ↓ scroll for more
+  </div>
+</section>
+
+<section id="counter">
+  <div class="inner">
+    <div class="head"><div class="script">Us, in numbers</div><p>Every day counted, every one worth it</p></div>
+    <div class="counter-row" id="counter-row"></div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="inner">
+    <div class="head"><div class="script">Moments I keep replaying</div><p>Tap the dots to flip through</p></div>
+    <div class="slideshow" id="slideshow"></div>
+    <div class="dots" id="dots"></div>
+    <div class="upload-note">✨ placeholder frames — send the real photos and they'll go right in</div>
+  </div>
+</section>
+
+<section id="reasons">
+  <div class="inner">
+    <div class="head"><div class="script">Reasons, just a few</div><p>There are more than these, but I had to stop somewhere</p></div>
+    <div class="reasons-grid" id="reasons-grid"></div>
+  </div>
+</section>
+
+<section id="letter">
+  <div class="inner">
+    <div class="head"><div class="script">A little letter</div></div>
+    <div class="letter">
+      <p>I hope today feels as special as you make every day feel for me. Thank you for your laugh, your patience, and the way you make even ordinary Tuesdays feel like something worth celebrating.</p>
+      <p>Here's to another year of us — more inside jokes, more adventures, more quiet nights that somehow still feel exciting because you're there.</p>
+      <div class="sign">Happy birthday, my love. 🎂</div>
+    </div>
+  </div>
+</section>
+
+<section id="surprise">
+  <div class="inner gift-wrap">
+    <div class="head"><div class="script">One more thing</div><p>Go ahead, tap the gift</p></div>
+    <div class="gift" onclick="openGift()">🎁</div>
+    <div class="gift-msg" id="gift-msg">I love you more than words fit on this page. 💛</div>
+  </div>
+</section>
+
+<footer>made with love, just for you</footer>
+
+<audio id="bg-music" loop preload="auto">
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* ---------- Typewriter ---------- */
+const lines = ["hey you...", "yes, you", "it's your day"];
+let li = 0, ci = 0, deleting = false;
+const tw = document.getElementById('typewriter');
+function type(){
+  const current = lines[li];
+  if(!deleting){
+    ci++;
+    tw.innerHTML = current.slice(0, ci) + '<span class="cursor">&nbsp;</span>';
+    if(ci === current.length){ deleting = true; setTimeout(type, 1200); return; }
+  } else {
+    ci--;
+    tw.innerHTML = current.slice(0, ci) + '<span class="cursor">&nbsp;</span>';
+    if(ci === 0){ deleting = false; li = (li+1) % lines.length; }
+  }
+  setTimeout(type, deleting ? 40 : 90);
+}
+type();
+
+/* ---------- Floating hearts ---------- */
+const heartsWrap = document.getElementById('hearts');
+const heartChars = ['❤','💕','💗','💖'];
+for(let i=0;i<22;i++){
+  const h = document.createElement('div');
+  h.className = 'heart';
+  h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+  h.style.left = Math.random()*100 + '%';
+  h.style.animationDuration = (10 + Math.random()*14) + 's';
+  h.style.animationDelay = (Math.random()*14) + 's';
+  h.style.fontSize = (14 + Math.random()*14) + 'px';
+  heartsWrap.appendChild(h);
+}
+
+/* ---------- Counter (days together placeholder) ---------- */
+const startDate = new Date('2023-01-01'); // placeholder — update to your actual start date
+function renderCounter(){
+  const now = new Date();
+  let diff = Math.floor((now - startDate) / 1000);
+  const days = Math.floor(diff / 86400);
+  const years = Math.floor(days / 365);
+  const months = Math.floor((days % 365) / 30);
+  const remDays = days % 30;
+  const stats = [
+    {num: years, lbl: 'Years'},
+    {num: months, lbl: 'Months'},
+    {num: remDays, lbl: 'Days'},
+    {num: days, lbl: 'Total Days'}
+  ];
+  const row = document.getElementById('counter-row');
+  row.innerHTML = '';
+  stats.forEach(s => {
+    const box = document.createElement('div');
+    box.className = 'counter-box';
+    box.innerHTML = `<div class="num">${s.num}</div><div class="lbl">${s.lbl}</div>`;
+    row.appendChild(box);
+  });
+}
+renderCounter();
+
+/* ---------- Slideshow ---------- */
+
+const images = [
+  "1.jpg",
+  "2.jpg",
+  "3.jpg",
+  "4.jpg",
+  "5.jpg"
+];
+
+const captions = [
+  "Beautiful Gift ❤️",
+  "Luxury Collection ✨",
+  "Elegant Blue 💙",
+  "Classic Grey 🤍",
+  "Pretty Pink 💕"
+];
+
+const slideshowEl = document.getElementById("slideshow");
+const dotsEl = document.getElementById("dots");
+
+images.forEach((img, i) => {
+
+  const slide = document.createElement("div");
+  slide.className = "slide" + (i === 0 ? " active" : "");
+
+  slide.innerHTML = `
+      <img src="${img}" style="
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      ">
+
+      <div class="cap">${captions[i]}</div>
+  `;
+
+  slideshowEl.appendChild(slide);
+
+  const dot = document.createElement("div");
+  dot.className = "dot" + (i === 0 ? " active" : "");
+  dot.onclick = () => goToSlide(i);
+
+  dotsEl.appendChild(dot);
+
+});
+
+let currentSlide = 0;
+
+function goToSlide(i){
+
+  document.querySelectorAll(".slide").forEach((slide,index)=>{
+      slide.classList.toggle("active",index===i);
+  });
+
+  document.querySelectorAll(".dot").forEach((dot,index)=>{
+      dot.classList.toggle("active",index===i);
+  });
+
+  currentSlide=i;
+
+}
+
+setInterval(()=>{
+   goToSlide((currentSlide+1)%images.length);
+},3000);
+
+/* ---------- Reasons ---------- */
+const reasons = [
+  "The way you always know how to make me laugh, even on rough days.",
+  "How you remember the little things I mention in passing.",
+  "Your ridiculous patience with me.",
+  "The way you get excited about the smallest good news.",
+  "How safe and at home I feel when I'm with you.",
+  "You, just being you. That's really the whole reason."
+];
+const grid = document.getElementById('reasons-grid');
+reasons.forEach((r,i) => {
+  const c = document.createElement('div');
+  c.className = 'reason-card';
+  c.innerHTML = `<span class="num">${String(i+1).padStart(2,'0')}</span><p>${r}</p>`;
+  grid.appendChild(c);
+});
+
+/* ---------- Gift reveal ---------- */
+function openGift(){
+  document.getElementById('gift-msg').classList.toggle('show');
+}
+
+/* ---------- Music toggle ---------- */
+let playing = false;
+
+function toggleMusic(){
+  const audio = document.getElementById('bg-music');
+  const btn = document.getElementById('music-toggle');
+
+  if(!audio.src || audio.src === window.location.href){
+    btn.textContent = playing ? '♪' : '♫';
+    playing = !playing;
+    return;
+  }
+
+  if(playing){
+    audio.pause();
+    btn.textContent = '♪';
+  }else{
+    audio.play();
+    btn.textContent = '♫';
+  }
+
+  playing = !playing;
+}
+
+/* 👇 Is code ko yahan add karo */
+document.addEventListener("DOMContentLoaded", function () {
+    const audio = document.getElementById("bg-music");
+
+    audio.volume = 0.3;
+
+    audio.play().catch(() => {});
+
+    playing = true;
+    document.getElementById("music-toggle").textContent = "♫";
+});
+</script>
+
+</body>
+</html>
